@@ -71,11 +71,16 @@ class KerasRunner(Runner):
         import os
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
+        from tensorflow.python.keras.backend import set_session
+        self.sess = tf.Session()
+        set_session(self.sess)
         self.model = load_precise_model(model_name)
         self.graph = tf.get_default_graph()
 
     def predict(self, inputs: np.ndarray):
+        from tensorflow.python.keras.backend import set_session
         with self.graph.as_default():
+            set_session(self.sess)
             return self.model.predict(inputs)
 
     def run(self, inp: np.ndarray) -> float:
